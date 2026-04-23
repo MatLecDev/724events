@@ -105,4 +105,24 @@ describe("When a data context is created", () => {
         const dataDisplayed = await screen.findByText("Événement récent");
         expect(dataDisplayed).toBeInTheDocument();
     });
+
+    it("should fetch events.json", async () => {
+        api.loadData = async () => {
+            const json = await fetch("/events.json");
+            return json.json();
+        };
+        global.fetch = jest.fn().mockResolvedValue({
+            json: () => Promise.resolve(mockData),
+        });
+        const Component = () => {
+            const { data } = useData();
+            return <div>{data?.events?.[0]?.title}</div>;
+        };
+        render(
+            <DataProvider>
+                <Component />
+            </DataProvider>
+        );
+        expect(global.fetch).toHaveBeenCalledWith("/events.json");
+    });
 });

@@ -45,12 +45,21 @@ describe("When slider is created", () => {
         await screen.findByText(sortedDataDesc[2].title);
     });
 
-    it('only first card should be displayed ', async() => {
+    it('should only display the first card ', async() => {
 
         const firstCard = await screen.findByText(sortedDataDesc[0].title);
         expect(firstCard.closest(".SlideCard")).toHaveClass("SlideCard--display");
 
         const secondCard = await screen.findByText(sortedDataDesc[1].title);
         expect(secondCard.closest(".SlideCard")).toHaveClass("SlideCard--hide");
+    });
+
+    it("should display events sorted by date, most recent first", async () => {
+        const cards = await screen.findAllByText(/.+/, { selector: ".SlideCard h3" });
+        const displayedTitles = cards.map((card) => card.textContent);
+
+        const expectedTitles = sortedDataDesc.map((event) => event.title);
+
+        expect(displayedTitles).toEqual(expectedTitles);
     });
 });
